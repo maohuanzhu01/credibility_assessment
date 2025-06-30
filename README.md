@@ -3,6 +3,8 @@
 Simple Flask application to evaluate a Transition Plan PDF against a list of
 questions using the OpenAI API. Results are scored according to the answers
 returned by the model.
+The included web interface now uses [Bootstrap](https://getbootstrap.com/) for a
+cleaner look.
 
 ## Setup
 
@@ -10,8 +12,9 @@ returned by the model.
    ```bash
    pip install -r requirements.txt
    ```
-2. Provide your OpenAI API key as environment variable `OPENAI_API_KEY` before
-   running the app:
+2. Provide your OpenAI API key via the `OPENAI_API_KEY` environment variable
+   before running the app. You can set it in your shell or store it in a `.env`
+   file and load it with a tool such as `dotenv`:
    ```bash
    export OPENAI_API_KEY=YOUR_KEY
    ```
