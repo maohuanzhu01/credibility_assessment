@@ -20,6 +20,7 @@ total_questions = {}
 
 OPENAI_MODEL = os.getenv('OPENAI_MODEL', 'gpt-4-1106-preview')
 QUESTIONS_FILE = 'questions.json'
+# Set your OpenAI API key in the environment variable `OPENAI_API_KEY`.
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def evaluate(session_id: str, text: str) -> None:

@@ -3,21 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Transition Plan Assessment</title>
+  <link rel="stylesheet" href="bootstrap.min.css">
   <style>
-    #progressContainer { width: 100%; background: #ddd; height: 20px; margin-top: 10px; }
-    #progressBar { width: 0; height: 100%; background: #4caf50; }
+    body { padding-top: 40px; }
   </style>
 </head>
 <body>
-  <h1>Transition Plan Assessment</h1>
-  <input type="file" id="pdfInput" accept="application/pdf" />
-  <button id="startBtn">Start Enhanced Assessment</button>
-  <div id="progressContainer">
-    <div id="progressBar"></div>
+  <div class="container">
+    <h1 class="mb-4">Transition Plan Assessment</h1>
+    <div class="mb-3">
+      <input type="file" class="form-control" id="pdfInput" accept="application/pdf">
+    </div>
+    <button id="startBtn" class="btn btn-primary">Start Enhanced Assessment</button>
+    <div class="progress mt-3" style="height: 20px;">
+      <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+    </div>
+    <div id="progressText" class="mt-2"></div>
+    <div id="results" class="mt-4"></div>
   </div>
-  <div id="progressText"></div>
-  <div id="results"></div>
-<script>
+  <script src="bootstrap.bundle.min.js"></script>
+  <script>
 let sessionId = null;
 
 async function pollStatus() {
@@ -27,12 +32,13 @@ async function pollStatus() {
   if (data.total) {
     const percent = data.total ? (data.completed / data.total) * 100 : 0;
     document.getElementById('progressBar').style.width = percent + '%';
-    document.getElementById('progressText').innerText = data.completed + '/' + data.total;
+    document.getElementById('progressBar').setAttribute('aria-valuenow', percent);
+    document.getElementById('progressText').innerText = `${data.completed}/${data.total}`;
   }
   if (data.finished) {
-    let html = '<ul>';
+    let html = '<ul class="list-group">';
     data.results.forEach((r, idx) => {
-      html += `<li>${idx + 1}. ${r.question} - ${r.answer} (score: ${r.score})</li>`;
+      html += `<li class="list-group-item">${idx + 1}. ${r.question} - ${r.answer} (score: ${r.score})</li>`;
     });
     html += '</ul>';
     document.getElementById('results').innerHTML = html;
@@ -56,6 +62,6 @@ document.getElementById('startBtn').addEventListener('click', async () => {
   document.getElementById('results').innerHTML = '';
   pollStatus();
 });
-</script>
+  </script>
 </body>
 </html>
