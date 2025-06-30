@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Transition Plan Assessment</title>
+  <style>
+    #progressContainer { width: 100%; background: #ddd; height: 20px; margin-top: 10px; }
+    #progressBar { width: 0; height: 100%; background: #4caf50; }
+  </style>
+</head>
+<body>
+  <h1>Transition Plan Assessment</h1>
+  <input type="file" id="pdfInput" accept="application/pdf" />
+  <button id="startBtn">Start Enhanced Assessment</button>
+  <div id="progressContainer">
+    <div id="progressBar"></div>
+  </div>
+  <div id="progressText"></div>
+  <div id="results"></div>
+<script>
+let sessionId = null;
+
+async function pollStatus() {
+  if (!sessionId) return;
+  const res = await fetch('/status/' + sessionId);
+  const data = await res.json();
+  if (data.total) {
+    const percent = data.total ? (data.completed / data.total) * 100 : 0;
+    document.getElementById('progressBar').style.width = percent + '%';
+    document.getElementById('progressText').innerText = data.completed + '/' + data.total;
+  }
+  if (data.finished) {
+    let html = '<ul>';
+    data.results.forEach((r, idx) => {
+      html += `<li>${idx + 1}. ${r.question} - ${r.answer} (score: ${r.score})</li>`;
+    });
+    html += '</ul>';
+    document.getElementById('results').innerHTML = html;
+  } else {
+    setTimeout(pollStatus, 1000);
+  }
+}
+
+document.getElementById('startBtn').addEventListener('click', async () => {
+  const file = document.getElementById('pdfInput').files[0];
+  if (!file) {
+    alert('Seleziona un PDF');
+    return;
+  }
+  const formData = new FormData();
+  formData.append('pdf', file);
+  const res = await fetch('/upload', { method: 'POST', body: formData });
+  const data = await res.json();
+  sessionId = data.session_id;
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('results').innerHTML = '';
+  pollStatus();
+});
+</script>
+</body>
+</html>
